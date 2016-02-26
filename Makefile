@@ -15,7 +15,11 @@ XDC_INSTALL_DIR = $(DEPOT)/xdctools
 CGT_C674_ELF_INSTALL_DIR = $(DEPOT)/codegen
 CGT_M3_ELF_INSTALL_DIR = $(DEPOT)/toolchain
 
-all: $(LINUXKERNEL)/include/config/kernel.release buildroot/output/images/rootfs.tar
+all: $(LINUXKERNEL)/include/config/kernel.release \
+     syslink/packages/ti/syslink/bin/TI816X/syslink.ko \
+     buildroot/output/images/rootfs.tar
+
+syslink/packages/ti/syslink/bin/TI816X/syslink.ko:
 	$(MAKE) -C syslink DEVICE=$(DEVICE) \
 			   SDK=$(SDK) \
 			   EXEC_DIR=$(EXEC_DIR) \
@@ -28,7 +32,8 @@ all: $(LINUXKERNEL)/include/config/kernel.release buildroot/output/images/rootfs
 			   XDC_INSTALL_DIR=$(XDC_INSTALL_DIR) \
 			   CGT_C674_ELF_INSTALL_DIR=$(CGT_C674_ELF_INSTALL_DIR) \
 			   CGT_M3_ELF_INSTALL_DIR=$(CGT_M3_ELF_INSTALL_DIR) \
-			   USE_SYSLINK_NOTIFY=0
+			   USE_SYSLINK_NOTIFY=0 \
+			   syslink-driver syslink-hlos
 
 buildroot/output/images/rootfs.tar:
 	cp buildroot_rootfs_defconfig buildroot/configs
@@ -42,4 +47,4 @@ $(LINUXKERNEL)/include/config/kernel.release:
 clean:
 	(cd buildroot && $(MAKE) distclean)
 	-rm -fr linux/deploy
-	$(MAKE) -C syslink clean
+	-$(MAKE) -C syslink clean
